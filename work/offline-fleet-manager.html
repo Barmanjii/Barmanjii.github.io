@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A fleet manager with no internet · Vijay Barman</title>
+<meta name="description" content="The factory said no internet. So the fleet manager moved onto the factory floor.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../index.html">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#ai">AI</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap narrow">
+    <article class="post">
+      <a class="back" href="../index.html#work">All work</a>
+      <p class="eyebrow" style="margin-top:22px">Site · 2026</p>
+      <h1>A fleet manager with no internet</h1>
+      <p class="hook">The factory said no internet. So the fleet manager moved onto the factory floor.</p>
+      <p class="ipnote">A simplified, general version of how this works. No company code, customer names or internal details.</p>
+      <h2>The problem</h2>
+      <p>A factory would not let its robots or any software reach the internet. It still needed what a fleet manager gives: missions, maps, robot status and an operator screen.</p>
+      <h2>How it works</h2>
+      <p>The whole fleet manager runs on site as a set of containers. Robots connect to a local message broker, and every robot proves who it is with its own certificate (mutual TLS). Robots and the fleet manager talk in VDA&nbsp;5050, the open standard for mobile robot fleets, so the message format is public and documented.</p>
+      <figure class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph site["Factory network, no internet"]
+    R1["Robot"] -->|"MQTT over mutual TLS"| B["Message broker"]
+    R2["Robot"] -->|"MQTT over mutual TLS"| B
+    B --> F["Fleet manager"]
+    F --> B
+    F --> UI["Operator screen"]
+  end
+</pre><figcaption>Everything stays inside the site network. Robots and the fleet manager meet at the broker.</figcaption></figure>
+      <h2>What I built</h2>
+      <ul>
+        <li>The offline install: the fleet manager, broker and operator UI packaged as one Docker stack.</li>
+        <li>Per robot certificates and mutual TLS on the broker.</li>
+        <li>A large share of the fleet manager's code in 2026, on top of the VDA&nbsp;5050 standard.</li>
+      </ul>
+      <h2>Choices that mattered</h2>
+      <ul>
+        <li><b>Everything on site.</b> No cloud dependency means nothing breaks when the factory's rules do not allow a connection.</li>
+        <li><b>Mutual TLS even on a closed network.</b> A device on the factory network cannot pretend to be a robot.</li>
+        <li><b>An open standard.</b> VDA&nbsp;5050 messages are documented, which makes testing and new robots easier.</li>
+      </ul>
+      <h2>Result</h2>
+      <dl class="facts">
+        <div><dt>Internet needed</dt><dd>None</dd></div>
+        <div><dt>Robots on it</dt><dd><mark>[robots on it]</mark></dd></div>
+        <div><dt>Live since</dt><dd><mark>[month live]</mark></dd></div>
+      </dl>
+      <p style="margin-top:22px"><ul class="chips"><li>Docker</li><li>MQTT</li><li>Mutual TLS</li><li>VDA 5050</li><li>Python</li><li>React</li></ul></p>
+      <nav class="next" aria-label="More work">
+        <a href="../index.html#work">All work</a>
+        <a href="robot-gateway.html">Next: The robot&#x27;s gateway to the cloud</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<footer><div class="wrap narrow">Vijay Barman · Pune, India</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "base",
+    flowchart: { curve: "basis", htmlLabels: true },
+    themeVariables: {
+      fontFamily: "IBM Plex Sans, system-ui, sans-serif",
+      fontSize: "15px",
+      primaryColor: "#e4f0f3",
+      primaryBorderColor: "#0a6b8a",
+      primaryTextColor: "#14171a",
+      lineColor: "#5a615e",
+      secondaryColor: "#fbf0dc",
+      tertiaryColor: "#f4f5f2",
+      clusterBkg: "#f4f5f2",
+      clusterBorder: "#c9d0ca",
+      actorBkg: "#e4f0f3",
+      actorBorder: "#0a6b8a",
+      noteBkgColor: "#fbf0dc",
+      noteBorderColor: "#a76a12"
+    }
+  });
+</script>
+</body>
+</html>

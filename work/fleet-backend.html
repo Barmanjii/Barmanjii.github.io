@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>One backend, every screen · Vijay Barman</title>
+<meta name="description" content="The API behind the web dashboard and the mobile app, serving many customers at once, each seeing only what they should.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../index.html">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#ai">AI</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap narrow">
+    <article class="post">
+      <a class="back" href="../index.html#work">All work</a>
+      <p class="eyebrow" style="margin-top:22px">Product · since 2022</p>
+      <h1>One backend, every screen</h1>
+      <p class="hook">The API behind the web dashboard and the mobile app, serving many customers at once, each seeing only what they should.</p>
+      <p class="ipnote">A simplified, general version of how this works. No company code, customer names or internal details.</p>
+      <h2>The problem</h2>
+      <p>Customer admins, operators and internal teams all need the same fleet data: robots, reports, alerts, users and licenses. They use it on the web and on their phones, and each person should see only what their role allows.</p>
+      <h2>How it works</h2>
+      <p>One multi customer REST API in FastAPI serves both the React dashboard and the Flutter app. Access rules live in one place as policies (OPA), with the result cached in Redis so checks stay fast. Heavy work like reports and usage alerts runs in the background, and the app gets push notifications.</p>
+      <figure class="diagram"><pre class="mermaid">
+flowchart LR
+  WEB["Web dashboard, React"] --> API["FastAPI, many customers"]
+  APP["Mobile app, Flutter"] --> API
+  API --> AUTH{"Access rules, OPA and Redis"}
+  API --> DB[("PostgreSQL")]
+  API --> JOBS["Background reports and alerts"]
+  JOBS --> PUSH["Push notifications"]
+  PUSH --> APP
+</pre><figcaption>Two screens, one API, one place where access is decided.</figcaption></figure>
+      <h2>What I built</h2>
+      <ul>
+        <li>Most of the backend since 2022: reports, bulk usage reports, usage alerts, license APIs, region routing and transfers.</li>
+        <li>In the mobile app (2026): usage reminders, a watchlist, alerts, the activity tab, mission scheduling, ticket summary, the fleet screen and translations.</li>
+        <li>Dashboard screens for region aware login, transfers and licenses.</li>
+      </ul>
+      <h2>Choices that mattered</h2>
+      <ul>
+        <li><b>One API for both screens.</b> A fix or a new feature lands once.</li>
+        <li><b>Access decided in one place.</b> Policies, not checks scattered across endpoints.</li>
+        <li><b>Heavy work in the background.</b> Reports and alerts never slow down a page. And on the screen: if an operator has to think twice, it is not done.</li>
+      </ul>
+      <h2>Result</h2>
+      <dl class="facts">
+        <div><dt>Customers</dt><dd>Many, one API</dd></div>
+        <div><dt>Reports</dt><dd><mark>[report time before and after]</mark></dd></div>
+        <div><dt>App releases</dt><dd><mark>[releases in 2026]</mark></dd></div>
+      </dl>
+      <p style="margin-top:22px"><ul class="chips"><li>FastAPI</li><li>PostgreSQL</li><li>Redis</li><li>OPA</li><li>React</li><li>Flutter</li></ul></p>
+      <nav class="next" aria-label="More work">
+        <a href="../index.html#work">All work</a>
+        <a href="robot-discovery.html">Next: No one types an IP on a factory floor</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<footer><div class="wrap narrow">Vijay Barman · Pune, India</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "base",
+    flowchart: { curve: "basis", htmlLabels: true },
+    themeVariables: {
+      fontFamily: "IBM Plex Sans, system-ui, sans-serif",
+      fontSize: "15px",
+      primaryColor: "#e4f0f3",
+      primaryBorderColor: "#0a6b8a",
+      primaryTextColor: "#14171a",
+      lineColor: "#5a615e",
+      secondaryColor: "#fbf0dc",
+      tertiaryColor: "#f4f5f2",
+      clusterBkg: "#f4f5f2",
+      clusterBorder: "#c9d0ca",
+      actorBkg: "#e4f0f3",
+      actorBorder: "#0a6b8a",
+      noteBkgColor: "#fbf0dc",
+      noteBorderColor: "#a76a12"
+    }
+  });
+</script>
+</body>
+</html>

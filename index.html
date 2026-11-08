@@ -11,129 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<style>
-  /* Layout: a quiet fleet status board. One column of sections, work as a two column grid of unit cards. */
-  :root {
-    --bg: #f4f5f2;
-    --surface: #ffffff;
-    --ink: #14171a;
-    --muted: #5a615e;
-    --line: #dde1dc;
-    --accent: #0a6b8a;
-    --accent-soft: #e4f0f3;
-    --signal: #a76a12;
-    --signal-soft: #fbf0dc;
-    --fill: #fff1bf;
-    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    color-scheme: light;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16.5px/1.65 var(--body); }
-  a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-  a:hover { text-decoration-thickness: 2px; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
-
-  /* top bar */
-  .bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; }
-  .bar .mark { font: 700 0.95rem/1 var(--display); font-stretch: 115%; letter-spacing: 0.01em; color: var(--ink); text-decoration: none; white-space: nowrap; }
-  .bar nav { display: flex; gap: 20px; font: 500 0.78rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
-  .bar nav a { color: var(--muted); text-decoration: none; }
-  .bar nav a:hover { color: var(--ink); }
-
-  /* hero */
-  .hero { padding: 72px 0 40px; }
-  .eyebrow { font: 500 0.78rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 14px; }
-  h1 { font: 800 clamp(2.4rem, 6vw, 4.1rem)/1.02 var(--display); font-stretch: 118%; letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
-  .lede { font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.55; max-width: 40em; margin: 22px 0 0; display: grid; gap: 10px; }
-  .lede p { margin: 0; }
-  .lede p + p { color: var(--muted); }
-  .links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 0.9rem/1 var(--body); text-decoration: none; cursor: pointer; }
-  .btn:hover { border-color: var(--ink); text-decoration: none; }
-  .btn.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .btn.primary:hover { background: #2a2f33; }
-  .btn svg { width: 16px; height: 16px; flex: none; }
-
-  /* sections */
-  section { padding: 56px 0 8px; }
-  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; margin-bottom: 24px; }
-  h2 { font: 700 1.45rem/1.2 var(--display); font-stretch: 112%; margin: 0; }
-  .head p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-
-  /* work cards */
-  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; transition: border-color .15s ease, transform .15s ease; }
-  .card:hover { border-color: #b9c2bc; transform: translateY(-2px); }
-  .card .eyebrow { margin: 0; }
-  .card h3 { font: 650 1.16rem/1.3 var(--display); font-stretch: 104%; margin: -4px 0 0; text-wrap: balance; }
-  .card dl { margin: 0; display: grid; gap: 10px; }
-  .card dt { font: 500 0.7rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
-  .card dd { margin: 0; }
-  .result { border-top: 1px dashed var(--line); padding-top: 12px; }
-  .result dd { font-weight: 600; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 0; list-style: none; }
-  .chips li { font: 500 0.74rem/1 var(--mono); padding: 6px 8px; border-radius: 6px; background: var(--accent-soft); color: #0b4d63; }
-  mark { background: var(--fill); color: inherit; padding: 0 4px; border-radius: 4px; font-weight: 500; }
-
-  /* AI pipeline */
-  .ai-intro { max-width: 46em; margin: 0 0 22px; }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; counter-reset: step; }
-  .steps li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; position: relative; }
-  .steps li::before { content: "0" counter(step); display: block; font: 500 0.75rem/1 var(--mono); color: var(--accent); margin-bottom: 10px; }
-  .steps b { display: block; font: 650 1rem/1.3 var(--display); margin-bottom: 6px; }
-  .steps span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; display: block; }
-  .steps li:not(:last-child)::after { content: ""; position: absolute; top: 22px; right: -12px; width: 12px; height: 1px; background: var(--line); }
-
-  /* building now */
-  .build { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; }
-  .status { display: inline-flex; align-items: center; gap: 8px; font: 500 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--signal); background: var(--signal-soft); padding: 6px 10px; border-radius: 999px; }
-  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); }
-  .build h3 { font: 700 1.5rem/1.2 var(--display); font-stretch: 112%; margin: 14px 0 8px; }
-  .build p { margin: 0 0 14px; }
-  .miles { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-content: start; }
-  .miles li { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 10px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-  .miles li:last-child { border-bottom: 0; padding-bottom: 0; }
-  .miles code { font: 500 0.8rem/1 var(--mono); color: var(--accent); }
-
-  /* skills */
-  .skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .skills div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
-  .skills h3 { font: 500 0.72rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 10px; }
-  .skills p { margin: 0; font-size: 0.95rem; }
-
-  /* contact */
-  .contact { padding: 56px 0 24px; }
-  .contact .box { border-top: 1px solid var(--line); padding-top: 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
-  .contact h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
-  .email { font: 500 1rem/1 var(--mono); user-select: all; margin: 10px 0 0; }
-  .links.flush { margin: 0; }
-  footer { color: var(--muted); font: 400 0.8rem/1.5 var(--mono); padding: 28px 0 40px; }
-
-  @media (max-width: 860px) {
-    .steps { grid-template-columns: 1fr; }
-    .steps li:not(:last-child)::after { top: auto; bottom: -12px; right: auto; left: 28px; width: 1px; height: 12px; }
-    .build { grid-template-columns: 1fr; }
-    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (max-width: 640px) {
-    .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-    .bar nav { gap: 14px; }
-    .bar nav .opt { display: none; }
-    .hero { padding: 44px 0 24px; }
-    .grid, .skills { grid-template-columns: 1fr; }
-    .card { padding: 18px 16px 16px; }
-    .build { padding: 18px 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    .card, .card:hover { transition: none; transform: none; }
-  }
-</style>
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 <header class="bar">
@@ -142,7 +20,7 @@
     <nav aria-label="Sections">
       <a href="#work">Work</a>
       <a href="#ai">AI</a>
-      <a class="opt" href="#building">Building</a>
+      <a class="opt" href="#life">Life</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -163,79 +41,67 @@
         <li><a class="btn" href="https://github.com/Barmanjii">GitHub</a></li>
         <li><button class="btn copy" type="button" data-copy="vbarman116@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copy email</span></button></li>
       </ul>
+
+      <div class="flow" role="img" aria-label="The layers I work across: robot, site, cloud and operator screen, with data flowing up and commands flowing down.">
+        <div class="node"><b><i></i>Robot</b><span>ROS 2 · C++</span></div>
+        <div class="link" aria-hidden="true"><span class="up"></span><span class="down"></span></div>
+        <div class="node"><b><i></i>Site</b><span>Docker · MQTT · mTLS</span></div>
+        <div class="link" aria-hidden="true"><span class="up"></span><span class="down"></span></div>
+        <div class="node"><b><i></i>Cloud</b><span>FastAPI · AWS · Terraform</span></div>
+        <div class="link" aria-hidden="true"><span class="up"></span><span class="down"></span></div>
+        <div class="node"><b><i></i>Operator</b><span>React · Flutter</span></div>
+      </div>
+      <p class="legend"><span>telemetry and reports</span><span class="cmd">missions, updates, settings</span></p>
     </section>
 
     <section id="work" aria-labelledby="work-h">
       <div class="head">
         <h2 id="work-h">Selected work</h2>
-        <p>Work code is private, so each project is a short case study.</p>
+        <p>Short hooks. Open one for how it works.</p>
       </div>
       <div class="grid">
-        <article class="card">
-          <p class="eyebrow">SDE 2 · Cloud</p>
-          <h3>Moving live customers to a US region</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>Production customers ran in the AWS India region and had to move to a US region while staying live. <mark>[why: latency, data rules or a client ask]</mark></dd></div>
-            <div><dt>What I did</dt><dd>Built global routing on Lambda and DynamoDB so each request reaches the right region, and wrote the whole setup in Terraform.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[customers or robots moved, downtime]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>AWS Lambda</li><li>DynamoDB</li><li>Terraform</li></ul>
-        </article>
-
-        <article class="card">
-          <p class="eyebrow">SDE 2 · Edge</p>
-          <h3>A fleet manager for a factory with no internet</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>A factory could not let its robots or the fleet manager reach the internet.</dd></div>
-            <div><dt>What I did</dt><dd>Packaged the fleet manager as an offline Docker stack. Robots talk to it over MQTT with mutual TLS.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[robots on it, months live]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>Docker</li><li>MQTT</li><li>Mutual TLS</li></ul>
-        </article>
-
-        <article class="card">
-          <p class="eyebrow">SDE 2 · Data</p>
-          <h3>Faster, more accurate robot reports</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>Fleet reports were slow and sometimes wrong.</dd></div>
-            <div><dt>What I did</dt><dd>Redesigned the reporting pipelines and how report data is stored.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[report time before and after]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>Python</li><li>PostgreSQL</li><li>TimescaleDB</li></ul>
-        </article>
-
-        <article class="card">
-          <p class="eyebrow">SDE 2 · Robot</p>
-          <h3>Robot telemetry to the cloud</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>Telemetry and reports needed a reliable path from the robot to the cloud.</dd></div>
-            <div><dt>What I did</dt><dd>Wrote a ROS 2 C++ node that streams them to the cloud backend.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[robots running it]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>ROS 2</li><li>C++</li></ul>
-        </article>
-
-        <article class="card">
-          <p class="eyebrow">SDE 1 · Backend</p>
-          <h3>One dashboard, different access</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>Different users needed different access to the same fleet data.</dd></div>
-            <div><dt>What I did</dt><dd>Built the dashboard backend in FastAPI, SQLAlchemy and PostgreSQL, with access rules in OPA.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[users or sites on it]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>FastAPI</li><li>PostgreSQL</li><li>OPA</li></ul>
-        </article>
-
-        <article class="card">
-          <p class="eyebrow">SDE 1 and 2 · Product UI</p>
-          <h3>Screens an operator uses without thinking twice</h3>
-          <dl>
-            <div><dt>Problem</dt><dd>The people setting up robots on site are operators, not engineers.</dd></div>
-            <div><dt>What I did</dt><dd>Built the fleet manager web app and the robot sensor profile editor in React, and mission scheduling in the Flutter app. One rule: if an operator has to think twice, it is not done.</dd></div>
-            <div class="result"><dt>Result</dt><dd><mark>[optional: setup time or support calls]</mark></dd></div>
-          </dl>
-          <ul class="chips"><li>React</li><li>TypeScript</li><li>Flutter</li></ul>
-        </article>
+        <a class="card" href="work/two-regions.html">
+          <p class="eyebrow">Cloud · 2026</p>
+          <h3>Two regions, one fleet</h3>
+          <p class="hook">One login for the world, data that stays in its own region, and a robot's whole history moves when the robot does.</p>
+          <p class="result">I wrote nearly all of the transfer and rollout code.</p>
+          <div class="more"><ul class="chips"><li>AWS Lambda</li><li>DynamoDB</li><li>Terraform</li></ul><span class="go">How it works</span></div>
+        </a>
+        <a class="card" href="work/offline-fleet-manager.html">
+          <p class="eyebrow">Site · 2026</p>
+          <h3>A fleet manager with no internet</h3>
+          <p class="hook">The factory said no internet. So the fleet manager moved onto the factory floor.</p>
+          <p class="result">VDA&nbsp;5050, MQTT over mutual TLS, one offline install.</p>
+          <div class="more"><ul class="chips"><li>Docker</li><li>MQTT</li><li>VDA 5050</li></ul><span class="go">How it works</span></div>
+        </a>
+        <a class="card" href="work/robot-gateway.html">
+          <p class="eyebrow">Robot · since 2024</p>
+          <h3>The robot's gateway to the cloud</h3>
+          <p class="hook">One service on every robot sends data up, takes settings down, and serves a small web editor to field engineers.</p>
+          <p class="result">I started it and wrote most of it.</p>
+          <div class="more"><ul class="chips"><li>ROS 2</li><li>C++</li><li>REST</li></ul><span class="go">How it works</span></div>
+        </a>
+        <a class="card" href="work/licenses.html">
+          <p class="eyebrow">Security · 2026</p>
+          <h3>Licenses that survive a power cut</h3>
+          <p class="hook">A broken license file can stop a working robot. Now it is hard to break and quick to fix.</p>
+          <p class="result">Built across the robot, the backend and both apps.</p>
+          <div class="more"><ul class="chips"><li>Signatures</li><li>Atomic writes</li><li>Audit</li></ul><span class="go">How it works</span></div>
+        </a>
+        <a class="card" href="work/fleet-backend.html">
+          <p class="eyebrow">Product · since 2022</p>
+          <h3>One backend, every screen</h3>
+          <p class="hook">The API behind the web dashboard and the mobile app, serving many customers at once, each seeing only what they should.</p>
+          <p class="result">Most of the backend since 2022, and a big part of the app in 2026.</p>
+          <div class="more"><ul class="chips"><li>FastAPI</li><li>OPA</li><li>Flutter</li></ul><span class="go">How it works</span></div>
+        </a>
+        <a class="card" href="work/robot-discovery.html">
+          <p class="eyebrow">Field · since 2024</p>
+          <h3>No one types an IP on a factory floor</h3>
+          <p class="hook">The field app finds every robot on the network by itself, then installs, updates and fixes it.</p>
+          <p class="result">I wrote the robot side and the first app side.</p>
+          <div class="more"><ul class="chips"><li>UDP</li><li>ROS 2</li><li>Flutter</li></ul><span class="go">How it works</span></div>
+        </a>
       </div>
     </section>
 
@@ -282,6 +148,22 @@
         <div><h3>Cloud</h3><p>AWS (ECS, RDS, S3, Lambda, DynamoDB), Terraform, Docker, Linux</p></div>
         <div><h3>Robots</h3><p>ROS 2, C++</p></div>
         <div><h3>Frontend</h3><p>React, TypeScript, Flutter</p></div>
+      </div>
+    </section>
+
+    <section id="life" aria-labelledby="life-h">
+      <div class="head"><h2 id="life-h">Off the clock</h2></div>
+      <div class="life">
+        <p>Most of what I like outside work takes practice and a bit of patience.</p>
+        <ul class="tags">
+          <li>Badminton</li>
+          <li>Gym</li>
+          <li>Chess</li>
+          <li>Hiking <small>first trek done</small></li>
+          <li>Guitar <small>learning</small></li>
+          <li>Reading</li>
+          <li>Weekend rides</li>
+        </ul>
       </div>
     </section>
 

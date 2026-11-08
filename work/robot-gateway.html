@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The robot&#x27;s gateway to the cloud · Vijay Barman</title>
+<meta name="description" content="One service on every robot sends data up, takes settings down, and serves a small web editor to field engineers.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../index.html">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#ai">AI</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap narrow">
+    <article class="post">
+      <a class="back" href="../index.html#work">All work</a>
+      <p class="eyebrow" style="margin-top:22px">Robot · since 2024</p>
+      <h1>The robot&#x27;s gateway to the cloud</h1>
+      <p class="hook">One service on every robot sends data up, takes settings down, and serves a small web editor to field engineers.</p>
+      <p class="ipnote">A simplified, general version of how this works. No company code, customer names or internal details.</p>
+      <h2>The problem</h2>
+      <p>A robot needs one dependable way to send telemetry and reports to the cloud, take new settings back, and let a field engineer adjust it on site, all while WiFi comes and goes and power can be cut at any moment.</p>
+      <h2>How it works</h2>
+      <p>A ROS&nbsp;2 package on the robot acts as its gateway. Nodes collect telemetry and reports, buffer them locally, and upload in batches when the network is there. A small local API and an embedded web editor let field engineers change maps and sensor settings. Every file the robot depends on is written safely: write a copy, then swap it in, so a power cut never leaves a half written file.</p>
+      <figure class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph robot["On the robot"]
+    S["Sensors and navigation"] --> N["ROS 2 nodes"]
+    N --> Q["Local buffer"]
+    API["Local API"] --> WEB["Web editor for field engineers"]
+  end
+  Q -->|"batched upload"| C["Cloud: telemetry and reports"]
+  C -->|"settings"| API
+</pre><figcaption>Data waits in a buffer when the network drops, then goes up in batches.</figcaption></figure>
+      <h2>What I built</h2>
+      <ul>
+        <li>Started the package in 2024 and wrote most of it.</li>
+        <li>The telemetry streamer: buffered, batched uploads to a time series store.</li>
+        <li>The sync of processed reports to the cloud.</li>
+        <li>A web editor for the robot's sensor safety profiles (lidar, camera, ultrasonic) with checks, version history and restore.</li>
+      </ul>
+      <h2>Choices that mattered</h2>
+      <ul>
+        <li><b>Buffer, then batch.</b> Robots lose WiFi all the time. Data should wait, not disappear.</li>
+        <li><b>Safe writes everywhere.</b> Write a copy, then swap it in. A power cut can never corrupt a file the robot needs.</li>
+        <li><b>History and restore for settings.</b> A bad sensor profile can be rolled back, not rebuilt by hand.</li>
+      </ul>
+      <h2>Result</h2>
+      <dl class="facts">
+        <div><dt>Runs on</dt><dd>Every robot</dd></div>
+        <div><dt>My share</dt><dd>Started it, most of the code</dd></div>
+        <div><dt>Data loss</dt><dd><mark>[before and after]</mark></dd></div>
+      </dl>
+      <p style="margin-top:22px"><ul class="chips"><li>ROS 2</li><li>C++</li><li>Python</li><li>REST</li><li>TimescaleDB</li></ul></p>
+      <nav class="next" aria-label="More work">
+        <a href="../index.html#work">All work</a>
+        <a href="licenses.html">Next: Licenses that survive a power cut</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<footer><div class="wrap narrow">Vijay Barman · Pune, India</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "base",
+    flowchart: { curve: "basis", htmlLabels: true },
+    themeVariables: {
+      fontFamily: "IBM Plex Sans, system-ui, sans-serif",
+      fontSize: "15px",
+      primaryColor: "#e4f0f3",
+      primaryBorderColor: "#0a6b8a",
+      primaryTextColor: "#14171a",
+      lineColor: "#5a615e",
+      secondaryColor: "#fbf0dc",
+      tertiaryColor: "#f4f5f2",
+      clusterBkg: "#f4f5f2",
+      clusterBorder: "#c9d0ca",
+      actorBkg: "#e4f0f3",
+      actorBorder: "#0a6b8a",
+      noteBkgColor: "#fbf0dc",
+      noteBorderColor: "#a76a12"
+    }
+  });
+</script>
+</body>
+</html>

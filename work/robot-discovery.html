@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>No one types an IP on a factory floor · Vijay Barman</title>
+<meta name="description" content="The field app finds every robot on the network by itself, then installs, updates and fixes it.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../index.html">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#ai">AI</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap narrow">
+    <article class="post">
+      <a class="back" href="../index.html#work">All work</a>
+      <p class="eyebrow" style="margin-top:22px">Field · since 2024</p>
+      <h1>No one types an IP on a factory floor</h1>
+      <p class="hook">The field app finds every robot on the network by itself, then installs, updates and fixes it.</p>
+      <p class="ipnote">A simplified, general version of how this works. No company code, customer names or internal details.</p>
+      <h2>The problem</h2>
+      <p>Field engineers set up robots on networks they have never seen. Finding each robot's address by hand and following long checklists is slow and easy to get wrong.</p>
+      <h2>How it works</h2>
+      <p>A small discovery node runs on every robot. The field app sends one broadcast on the local network asking who is there, each robot answers directly with who it is, and the app checks it can reach the robot before opening a secure session. From there the app runs the usual field work: maps and paths, parameters, logs, software updates and network setup, with each user's permissions cached so the app works on site without internet.</p>
+      <figure class="diagram"><pre class="mermaid">
+sequenceDiagram
+  participant App as Field app
+  participant Net as Site network
+  participant R as Robot discovery node
+  App->>Net: Broadcast, who is here?
+  R-->>App: Direct reply with its identity
+  App->>R: Reachability check
+  App->>R: Secure session, then install, update or fix
+</pre><figcaption>One broadcast, direct replies, then a check before connecting. Works on WiFi and Ethernet.</figcaption></figure>
+      <h2>What I built</h2>
+      <ul>
+        <li>The discovery node on the robot, and the first broadcast client in the field app.</li>
+        <li>Two major release updates of the field app in 2024, plus an in place upgrade path for the robot software stack.</li>
+        <li>In 2026: switching a robot between regions, license reset, session expiry handling, cellular router setup and tablet layouts.</li>
+      </ul>
+      <h2>Choices that mattered</h2>
+      <ul>
+        <li><b>Broadcast and reply.</b> No setup on the network, no typing addresses.</li>
+        <li><b>Check before connecting.</b> The app only offers robots it can actually reach.</li>
+        <li><b>Permissions cached for offline.</b> The app works in a basement with no signal.</li>
+      </ul>
+      <h2>Result</h2>
+      <dl class="facts">
+        <div><dt>Typing IPs</dt><dd>None</dd></div>
+        <div><dt>Used for</dt><dd>Every install, both robot lines</dd></div>
+        <div><dt>Install time</dt><dd><mark>[before and after]</mark></dd></div>
+      </dl>
+      <p style="margin-top:22px"><ul class="chips"><li>UDP</li><li>ROS 2</li><li>Flutter</li><li>SSH</li></ul></p>
+      <nav class="next" aria-label="More work">
+        <a href="../index.html#work">All work</a>
+        <a href="two-regions.html">Next: Two regions, one fleet</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<footer><div class="wrap narrow">Vijay Barman · Pune, India</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "base",
+    flowchart: { curve: "basis", htmlLabels: true },
+    themeVariables: {
+      fontFamily: "IBM Plex Sans, system-ui, sans-serif",
+      fontSize: "15px",
+      primaryColor: "#e4f0f3",
+      primaryBorderColor: "#0a6b8a",
+      primaryTextColor: "#14171a",
+      lineColor: "#5a615e",
+      secondaryColor: "#fbf0dc",
+      tertiaryColor: "#f4f5f2",
+      clusterBkg: "#f4f5f2",
+      clusterBorder: "#c9d0ca",
+      actorBkg: "#e4f0f3",
+      actorBorder: "#0a6b8a",
+      noteBkgColor: "#fbf0dc",
+      noteBorderColor: "#a76a12"
+    }
+  });
+</script>
+</body>
+</html>

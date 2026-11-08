@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two regions, one fleet · Vijay Barman</title>
+<meta name="description" content="One login for the world, data that stays in its own region, and a robot&#x27;s whole history moves when the robot does.">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../index.html">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#ai">AI</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap narrow">
+    <article class="post">
+      <a class="back" href="../index.html#work">All work</a>
+      <p class="eyebrow" style="margin-top:22px">Cloud · 2026</p>
+      <h1>Two regions, one fleet</h1>
+      <p class="hook">One login for the world, data that stays in its own region, and a robot's whole history moves when the robot does.</p>
+      <p class="ipnote">A simplified, general version of how this works. No company code, customer names or internal details.</p>
+      <h2>The problem</h2>
+      <p>The fleet grew outside India, so the platform now runs in two AWS regions, India and the US. Customers should sign in once from anywhere, while their data stays in their own region. Robots also move between regions, and their history has to move with them.</p>
+      <h2>How it works</h2>
+      <p>Each region is a self contained cell with its own API and database. Login is global. A thin routing layer in front looks up where each customer lives and sends every request to the right cell. Moving a customer is a copy job between cells that checks everything first, tracks each item, and leaves an audit trail.</p>
+      <figure class="diagram"><pre class="mermaid">
+flowchart LR
+  U["User or robot"] --> G["Global login and routing"]
+  G -->|India customer| IN["India cell: API and database"]
+  G -->|US customer| US["US cell: API and database"]
+  IN -. "transfer with checks and audit" .-> US
+</pre><figcaption>Requests go to the customer&#x27;s home cell. A transfer copies a customer or robot from one cell to the other.</figcaption></figure>
+      <h2>What I built</h2>
+      <ul>
+        <li>The routing layer on AWS Lambda with a DynamoDB lookup.</li>
+        <li>The transfer: checks before anything moves, a status for every item so a rerun never copies twice, and an audit trail.</li>
+        <li>A transfer wizard in the dashboard, so ops can move a customer without a script.</li>
+        <li>Most of the infrastructure code: Terraform for each cell and the rollout scripts.</li>
+      </ul>
+      <h2>Choices that mattered</h2>
+      <ul>
+        <li><b>Cells over one global database.</b> A problem in one region stays in that region, and data stays where the customer is.</li>
+        <li><b>Transfers you can safely rerun.</b> Every item records its own status, so a half finished run just continues.</li>
+        <li><b>Everything in Terraform.</b> A new region is mostly configuration, not a long list of console clicks.</li>
+      </ul>
+      <h2>Result</h2>
+      <dl class="facts">
+        <div><dt>Regions live</dt><dd>India and US</dd></div>
+        <div><dt>Moved</dt><dd><mark>[customers or robots moved]</mark></dd></div>
+        <div><dt>Downtime</dt><dd><mark>[downtime during the move]</mark></dd></div>
+      </dl>
+      <p style="margin-top:22px"><ul class="chips"><li>AWS Lambda</li><li>DynamoDB</li><li>Terraform</li><li>FastAPI</li><li>PostgreSQL</li><li>React</li></ul></p>
+      <nav class="next" aria-label="More work">
+        <a href="../index.html#work">All work</a>
+        <a href="offline-fleet-manager.html">Next: A fleet manager with no internet</a>
+      </nav>
+    </article>
+  </div>
+</main>
+<footer><div class="wrap narrow">Vijay Barman · Pune, India</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "base",
+    flowchart: { curve: "basis", htmlLabels: true },
+    themeVariables: {
+      fontFamily: "IBM Plex Sans, system-ui, sans-serif",
+      fontSize: "15px",
+      primaryColor: "#e4f0f3",
+      primaryBorderColor: "#0a6b8a",
+      primaryTextColor: "#14171a",
+      lineColor: "#5a615e",
+      secondaryColor: "#fbf0dc",
+      tertiaryColor: "#f4f5f2",
+      clusterBkg: "#f4f5f2",
+      clusterBorder: "#c9d0ca",
+      actorBkg: "#e4f0f3",
+      actorBorder: "#0a6b8a",
+      noteBkgColor: "#fbf0dc",
+      noteBorderColor: "#a76a12"
+    }
+  });
+</script>
+</body>
+</html>
