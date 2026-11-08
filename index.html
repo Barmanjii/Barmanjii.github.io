@@ -2,164 +2,317 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vijay Barman, Backend Engineer</title>
 <meta name="description" content="Backend engineer in Pune. I build the software behind robot fleets, from the robot to the cloud to the operator's screen.">
 <meta property="og:title" content="Vijay Barman, Backend Engineer">
-<meta property="og:description" content="Software for robot fleets: Python, FastAPI, PostgreSQL, AWS, Terraform, ROS 2.">
+<meta property="og:description" content="Software for robot fleets: Python, FastAPI, PostgreSQL, AWS, Terraform, ROS 2. Fast with AI coding agents, with guardrails.">
 <meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
+  /* Layout: a quiet fleet status board. One column of sections, work as a two column grid of unit cards. */
   :root {
-    --bg: #fbfaf7;
-    --card: #ffffff;
-    --ink: #1c1d1f;
-    --muted: #5d6168;
-    --line: #e6e3dc;
-    --accent: #1f5f8b;
-    --tag: #eef3f7;
-    --fill: #fff1c2;
+    --bg: #f4f5f2;
+    --surface: #ffffff;
+    --ink: #14171a;
+    --muted: #5a615e;
+    --line: #dde1dc;
+    --accent: #0a6b8a;
+    --accent-soft: #e4f0f3;
+    --signal: #a76a12;
+    --signal-soft: #fbf0dc;
+    --fill: #fff1bf;
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
     color-scheme: light;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16.5px/1.65 var(--body); }
+  a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+  /* top bar */
+  .bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; }
+  .bar .mark { font: 700 0.95rem/1 var(--display); font-stretch: 115%; letter-spacing: 0.01em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .bar nav { display: flex; gap: 20px; font: 500 0.78rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+  .bar nav a { color: var(--muted); text-decoration: none; }
+  .bar nav a:hover { color: var(--ink); }
+
+  /* hero */
+  .hero { padding: 72px 0 40px; }
+  .eyebrow { font: 500 0.78rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 14px; }
+  h1 { font: 800 clamp(2.4rem, 6vw, 4.1rem)/1.02 var(--display); font-stretch: 118%; letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
+  .lede { font-size: clamp(1.1rem, 2vw, 1.3rem); line-height: 1.55; max-width: 40em; margin: 22px 0 0; display: grid; gap: 10px; }
+  .lede p { margin: 0; }
+  .lede p + p { color: var(--muted); }
+  .links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 0.9rem/1 var(--body); text-decoration: none; cursor: pointer; }
+  .btn:hover { border-color: var(--ink); text-decoration: none; }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .btn.primary:hover { background: #2a2f33; }
+  .btn svg { width: 16px; height: 16px; flex: none; }
+
+  /* sections */
+  section { padding: 56px 0 8px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; margin-bottom: 24px; }
+  h2 { font: 700 1.45rem/1.2 var(--display); font-stretch: 112%; margin: 0; }
+  .head p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  /* work cards */
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; transition: border-color .15s ease, transform .15s ease; }
+  .card:hover { border-color: #b9c2bc; transform: translateY(-2px); }
+  .card .eyebrow { margin: 0; }
+  .card h3 { font: 650 1.16rem/1.3 var(--display); font-stretch: 104%; margin: -4px 0 0; text-wrap: balance; }
+  .card dl { margin: 0; display: grid; gap: 10px; }
+  .card dt { font: 500 0.7rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
+  .card dd { margin: 0; }
+  .result { border-top: 1px dashed var(--line); padding-top: 12px; }
+  .result dd { font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 0; list-style: none; }
+  .chips li { font: 500 0.74rem/1 var(--mono); padding: 6px 8px; border-radius: 6px; background: var(--accent-soft); color: #0b4d63; }
+  mark { background: var(--fill); color: inherit; padding: 0 4px; border-radius: 4px; font-weight: 500; }
+
+  /* AI pipeline */
+  .ai-intro { max-width: 46em; margin: 0 0 22px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; counter-reset: step; }
+  .steps li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; position: relative; }
+  .steps li::before { content: "0" counter(step); display: block; font: 500 0.75rem/1 var(--mono); color: var(--accent); margin-bottom: 10px; }
+  .steps b { display: block; font: 650 1rem/1.3 var(--display); margin-bottom: 6px; }
+  .steps span { color: var(--muted); font-size: 0.92rem; line-height: 1.5; display: block; }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; top: 22px; right: -12px; width: 12px; height: 1px; background: var(--line); }
+
+  /* building now */
+  .build { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; }
+  .status { display: inline-flex; align-items: center; gap: 8px; font: 500 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--signal); background: var(--signal-soft); padding: 6px 10px; border-radius: 999px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); }
+  .build h3 { font: 700 1.5rem/1.2 var(--display); font-stretch: 112%; margin: 14px 0 8px; }
+  .build p { margin: 0 0 14px; }
+  .miles { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-content: start; }
+  .miles li { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: 10px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .miles li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .miles code { font: 500 0.8rem/1 var(--mono); color: var(--accent); }
+
+  /* skills */
+  .skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .skills div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+  .skills h3 { font: 500 0.72rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 10px; }
+  .skills p { margin: 0; font-size: 0.95rem; }
+
+  /* contact */
+  .contact { padding: 56px 0 24px; }
+  .contact .box { border-top: 1px solid var(--line); padding-top: 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+  .contact h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
+  .email { font: 500 1rem/1 var(--mono); user-select: all; margin: 10px 0 0; }
+  .links.flush { margin: 0; }
+  footer { color: var(--muted); font: 400 0.8rem/1.5 var(--mono); padding: 28px 0 40px; }
+
+  @media (max-width: 860px) {
+    .steps { grid-template-columns: 1fr; }
+    .steps li:not(:last-child)::after { top: auto; bottom: -12px; right: auto; left: 28px; width: 1px; height: 12px; }
+    .build { grid-template-columns: 1fr; }
+    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  main { max-width: 760px; margin: 0 auto; padding: 56px 20px 40px; }
-  a { color: var(--accent); text-underline-offset: 3px; }
-  h1 { font-size: 2.1rem; line-height: 1.2; margin: 0; letter-spacing: -0.01em; }
-  h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 56px 0 16px; }
-  h3 { font-size: 1.15rem; margin: 0 0 4px; }
-  .role { color: var(--muted); margin: 6px 0 18px; }
-  .links { display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 0; margin: 0; list-style: none; }
-  .intro p { margin: 0 0 10px; font-size: 1.12rem; }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 22px 24px;
-    margin: 0 0 16px;
+  @media (max-width: 640px) {
+    .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+    .bar nav { gap: 14px; }
+    .bar nav .opt { display: none; }
+    .hero { padding: 44px 0 24px; }
+    .grid, .skills { grid-template-columns: 1fr; }
+    .card { padding: 18px 16px 16px; }
+    .build { padding: 18px 16px; }
   }
-  .stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; padding: 0; list-style: none; }
-  .stack li { background: var(--tag); color: #23415a; font-size: 0.8rem; padding: 2px 10px; border-radius: 999px; }
-  dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 6px 14px; }
-  dt { color: var(--muted); font-size: 0.92rem; padding-top: 1px; }
-  dd { margin: 0; }
-  mark { background: var(--fill); padding: 0 3px; border-radius: 3px; }
-  .note { color: var(--muted); font-size: 0.95rem; }
-  .card .body { margin: 0; }
-  .skills { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 6px 14px; }
-  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
-  @media (max-width: 560px) {
-    main { padding: 36px 16px 32px; }
-    h1 { font-size: 1.8rem; }
-    .card { padding: 18px 16px; }
-    dl, .skills { grid-template-columns: 1fr; gap: 2px; }
-    dd { margin-bottom: 10px; }
-    .role span { display: block; }
-    .role .sep { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .card, .card:hover { transition: none; transform: none; }
   }
 </style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>Vijay Barman</h1>
-    <p class="role"><span>Backend Engineer at Peppermint Robotics</span><span class="sep"> · </span><span>Pune, India</span></p>
-    <ul class="links">
-      <li><a href="https://www.linkedin.com/in/barmanjii88">LinkedIn</a></li>
-      <li><a href="https://github.com/Barmanjii">GitHub</a></li>
-      <li><a href="mailto:vbarman116@gmail.com">vbarman116@gmail.com</a></li>
-      <li><a href="Vijay_Barman_Resume.pdf">Resume (PDF)</a></li>
-    </ul>
-  </header>
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">Vijay Barman</a>
+    <nav aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#ai">AI</a>
+      <a class="opt" href="#building">Building</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
 
-  <section class="intro" aria-label="About">
-    <h2>About</h2>
-    <p>I build the software behind robot fleets, from the robot to the cloud to the operator's screen.</p>
-    <p>I help teams whose systems have to work in messy places: factories with no internet, two AWS regions, robots in the field.</p>
-    <p>Best at Python and AWS backends, and at turning rough requirements into something an operator uses without thinking twice.</p>
-  </section>
+<main id="top">
+  <div class="wrap">
+    <section class="hero" aria-label="Intro">
+      <p class="eyebrow">Vijay Barman · Backend Engineer at Peppermint Robotics · Pune</p>
+      <h1>Software for robot fleets, from the robot to the screen.</h1>
+      <div class="lede">
+        <p>I build backends that keep working in messy places: factories with no internet, two AWS regions, robots in the field.</p>
+        <p>Python and AWS first. I design for operators, and I use AI coding agents to move fast, with guardrails I helped write.</p>
+      </div>
+      <ul class="links">
+        <li><a class="btn primary" href="Vijay_Barman_Resume.pdf">Resume (PDF)</a></li>
+        <li><a class="btn" href="https://www.linkedin.com/in/barmanjii88">LinkedIn</a></li>
+        <li><a class="btn" href="https://github.com/Barmanjii">GitHub</a></li>
+        <li><button class="btn copy" type="button" data-copy="vbarman116@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copy email</span></button></li>
+      </ul>
+    </section>
 
-  <section aria-label="Selected work">
-    <h2>Selected work</h2>
-    <p class="note">My work code is private, so each project is told as a short case study.</p>
+    <section id="work" aria-labelledby="work-h">
+      <div class="head">
+        <h2 id="work-h">Selected work</h2>
+        <p>Work code is private, so each project is a short case study.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <p class="eyebrow">SDE 2 · Cloud</p>
+          <h3>Moving live customers to a US region</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>Production customers ran in the AWS India region and had to move to a US region while staying live. <mark>[why: latency, data rules or a client ask]</mark></dd></div>
+            <div><dt>What I did</dt><dd>Built global routing on Lambda and DynamoDB so each request reaches the right region, and wrote the whole setup in Terraform.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[customers or robots moved, downtime]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>AWS Lambda</li><li>DynamoDB</li><li>Terraform</li></ul>
+        </article>
 
-    <article class="card">
-      <h3>Moving live customers to a US region</h3>
-      <ul class="stack"><li>AWS Lambda</li><li>DynamoDB</li><li>Terraform</li></ul>
-      <dl>
-        <dt>Problem</dt><dd>Production customers ran in the AWS India region and had to move to a US region while staying live. <mark>[why: latency, data rules or a client ask]</mark></dd>
-        <dt>What I did</dt><dd>Built global routing on Lambda and DynamoDB so each request reaches the right region, and wrote the whole setup in Terraform.</dd>
-        <dt>Result</dt><dd><mark>[customers or robots moved, downtime, time taken]</mark></dd>
-      </dl>
-    </article>
+        <article class="card">
+          <p class="eyebrow">SDE 2 · Edge</p>
+          <h3>A fleet manager for a factory with no internet</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>A factory could not let its robots or the fleet manager reach the internet.</dd></div>
+            <div><dt>What I did</dt><dd>Packaged the fleet manager as an offline Docker stack. Robots talk to it over MQTT with mutual TLS.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[robots on it, months live]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>Docker</li><li>MQTT</li><li>Mutual TLS</li></ul>
+        </article>
 
-    <article class="card">
-      <h3>A fleet manager for a factory with no internet</h3>
-      <ul class="stack"><li>Docker</li><li>MQTT</li><li>Mutual TLS</li></ul>
-      <dl>
-        <dt>Problem</dt><dd>A factory could not let its robots or the fleet manager reach the internet.</dd>
-        <dt>What I did</dt><dd>Packaged the fleet manager as an offline Docker stack. Robots talk to it over MQTT with mutual TLS.</dd>
-        <dt>Result</dt><dd><mark>[robots on it, months live, install time]</mark></dd>
-      </dl>
-    </article>
+        <article class="card">
+          <p class="eyebrow">SDE 2 · Data</p>
+          <h3>Faster, more accurate robot reports</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>Fleet reports were slow and sometimes wrong.</dd></div>
+            <div><dt>What I did</dt><dd>Redesigned the reporting pipelines and how report data is stored.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[report time before and after]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>Python</li><li>PostgreSQL</li><li>TimescaleDB</li></ul>
+        </article>
 
-    <article class="card">
-      <h3>Faster, more accurate robot reports</h3>
-      <ul class="stack"><li>Python</li><li>PostgreSQL</li><li>TimescaleDB</li></ul>
-      <dl>
-        <dt>Problem</dt><dd>Fleet reports were slow and sometimes wrong.</dd>
-        <dt>What I did</dt><dd>Redesigned the reporting pipelines and how report data is stored.</dd>
-        <dt>Result</dt><dd><mark>[report time before and after, errors fixed]</mark></dd>
-      </dl>
-    </article>
+        <article class="card">
+          <p class="eyebrow">SDE 2 · Robot</p>
+          <h3>Robot telemetry to the cloud</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>Telemetry and reports needed a reliable path from the robot to the cloud.</dd></div>
+            <div><dt>What I did</dt><dd>Wrote a ROS 2 C++ node that streams them to the cloud backend.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[robots running it]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>ROS 2</li><li>C++</li></ul>
+        </article>
 
-    <article class="card">
-      <h3>Robot telemetry to the cloud</h3>
-      <ul class="stack"><li>ROS 2</li><li>C++</li></ul>
-      <dl>
-        <dt>Problem</dt><dd>Telemetry and reports needed a reliable path from the robot to the cloud.</dd>
-        <dt>What I did</dt><dd>Wrote a ROS 2 C++ node that streams them to the cloud backend.</dd>
-        <dt>Result</dt><dd><mark>[robots running it, data loss before and after]</mark></dd>
-      </dl>
-    </article>
+        <article class="card">
+          <p class="eyebrow">SDE 1 · Backend</p>
+          <h3>One dashboard, different access</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>Different users needed different access to the same fleet data.</dd></div>
+            <div><dt>What I did</dt><dd>Built the dashboard backend in FastAPI, SQLAlchemy and PostgreSQL, with access rules in OPA.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[users or sites on it]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>FastAPI</li><li>PostgreSQL</li><li>OPA</li></ul>
+        </article>
 
-    <article class="card">
-      <h3>One dashboard, different access</h3>
-      <ul class="stack"><li>FastAPI</li><li>SQLAlchemy</li><li>PostgreSQL</li><li>OPA</li></ul>
-      <dl>
-        <dt>Problem</dt><dd>Different users needed different access to the same fleet data.</dd>
-        <dt>What I did</dt><dd>Built the dashboard backend in FastAPI, SQLAlchemy and PostgreSQL, with access rules in OPA.</dd>
-        <dt>Result</dt><dd><mark>[users or sites on it]</mark></dd>
-      </dl>
-    </article>
-  </section>
+        <article class="card">
+          <p class="eyebrow">SDE 1 and 2 · Product UI</p>
+          <h3>Screens an operator uses without thinking twice</h3>
+          <dl>
+            <div><dt>Problem</dt><dd>The people setting up robots on site are operators, not engineers.</dd></div>
+            <div><dt>What I did</dt><dd>Built the fleet manager web app and the robot sensor profile editor in React, and mission scheduling in the Flutter app. One rule: if an operator has to think twice, it is not done.</dd></div>
+            <div class="result"><dt>Result</dt><dd><mark>[optional: setup time or support calls]</mark></dd></div>
+          </dl>
+          <ul class="chips"><li>React</li><li>TypeScript</li><li>Flutter</li></ul>
+        </article>
+      </div>
+    </section>
 
-  <section aria-label="Building now">
-    <h2>Building now</h2>
-    <article class="card">
-      <h3>Fleet Copilot</h3>
-      <ul class="stack"><li>Python</li><li>MQTT</li><li>TimescaleDB</li><li>MCP</li><li>OPA</li></ul>
-      <p class="body">A robot fleet simulator that speaks VDA&nbsp;5050, with an AI agent that answers operations questions through an MCP server. Any write the agent makes is gated by OPA rules, and an eval set checks its answers. Open source, coming January 2027.</p>
-    </article>
-  </section>
+    <section id="ai" aria-labelledby="ai-h">
+      <div class="head">
+        <h2 id="ai-h">How I work with AI</h2>
+        <p>Claude Code and Cursor, every day.</p>
+      </div>
+      <p class="ai-intro">Coding agents let me ramp up fast on new or legacy code and move quickly once I know it. Speed only counts if it is safe, so every change goes through the same five steps.</p>
+      <ol class="steps">
+        <li><b>Rules</b><span>Written rules the agents follow: style, limits, what never to touch. I helped write my team's.</span></li>
+        <li><b>Plan</b><span>The agent proposes a plan. I review the design before any code is written.</span></li>
+        <li><b>Build</b><span>Agents write and refactor the code, in parallel where the work splits cleanly.</span></li>
+        <li><b>Check</b><span>Tests, code review, and a dry run on a real system before anything ships.</span></li>
+        <li><b>Learn</b><span>Every mistake becomes a new rule, so it does not happen twice.</span></li>
+      </ol>
+    </section>
 
-  <section aria-label="Skills">
-    <h2>Skills</h2>
-    <dl class="skills">
-      <dt>Backend</dt><dd>Python, FastAPI, SQLAlchemy, PostgreSQL, TimescaleDB, Redis, MQTT</dd>
-      <dt>Cloud</dt><dd>AWS (ECS, RDS, S3, Lambda, DynamoDB), Terraform, Docker, Linux</dd>
-      <dt>Robots</dt><dd>ROS 2, C++</dd>
-      <dt>Frontend</dt><dd>React, TypeScript, Flutter</dd>
-    </dl>
-  </section>
+    <section id="building" aria-labelledby="build-h">
+      <div class="head">
+        <h2 id="build-h">Building now</h2>
+        <p>Open source, on GitHub when ready.</p>
+      </div>
+      <div class="build">
+        <div>
+          <span class="status">Building · Jan 2027</span>
+          <h3>Fleet Copilot</h3>
+          <p>A robot fleet simulator that speaks VDA&nbsp;5050, with an AI agent that answers operations questions through an MCP server. Any write the agent makes is gated by OPA rules, and an eval set checks its answers.</p>
+          <ul class="chips"><li>Python</li><li>MQTT</li><li>TimescaleDB</li><li>MCP</li><li>OPA</li><li>React</li></ul>
+        </div>
+        <ol class="miles" aria-label="Milestones">
+          <li><code>M1</code><span>Simulated robots publish VDA&nbsp;5050 state over MQTT</span></li>
+          <li><code>M2</code><span>FastAPI service, TimescaleDB, a live fleet page</span></li>
+          <li><code>M3</code><span>MCP server, the agent, 50 eval questions, OPA gated writes</span></li>
+          <li><code>M4</code><span>Architecture write up and a 2 minute demo</span></li>
+        </ol>
+      </div>
+    </section>
 
-  <footer>
-    Vijay Barman · Pune, India · <a href="mailto:vbarman116@gmail.com">vbarman116@gmail.com</a>
-  </footer>
+    <section aria-labelledby="skills-h">
+      <div class="head"><h2 id="skills-h">Skills</h2></div>
+      <div class="skills">
+        <div><h3>Backend</h3><p>Python, FastAPI, SQLAlchemy, PostgreSQL, TimescaleDB, Redis, MQTT</p></div>
+        <div><h3>Cloud</h3><p>AWS (ECS, RDS, S3, Lambda, DynamoDB), Terraform, Docker, Linux</p></div>
+        <div><h3>Robots</h3><p>ROS 2, C++</p></div>
+        <div><h3>Frontend</h3><p>React, TypeScript, Flutter</p></div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-h">
+      <div class="box">
+        <div>
+          <h2 id="contact-h">Say hello</h2>
+          <p class="email">vbarman116@gmail.com</p>
+        </div>
+        <ul class="links flush">
+          <li><button class="btn primary copy" type="button" data-copy="vbarman116@gmail.com"><span>Copy email</span></button></li>
+          <li><a class="btn" href="https://www.linkedin.com/in/barmanjii88">LinkedIn</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>Vijay Barman · Pune, India</footer>
+  </div>
 </main>
+
+<script>
+  document.querySelectorAll('.copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var label = b.querySelector('span');
+      var done = function () { label.textContent = 'Copied'; setTimeout(function () { label.textContent = 'Copy email'; }, 1600); };
+      var text = b.getAttribute('data-copy');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { label.textContent = text; });
+      } else { label.textContent = text; }
+    });
+  });
+</script>
 </body>
 </html>
